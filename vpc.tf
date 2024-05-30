@@ -1,5 +1,5 @@
 resource "aws_vpc" "jenkins-vpc" {
-  cidr_block       = "10.0.0.0/16"
+  cidr_block       = var.vpc_cidr
   instance_tenancy = "default"
 
   tags = {
@@ -9,7 +9,7 @@ resource "aws_vpc" "jenkins-vpc" {
 
 resource "aws_subnet" "jenkins_subnet" {
   vpc_id     = aws_vpc.jenkins-vpc.id
-  cidr_block = "10.0.1.0/24"
+  cidr_block = var.subnet_cidr
   tags = {
     Name = "jenkins-subnet"
   }
@@ -48,6 +48,7 @@ resource "aws_security_group" "jenkins_sg" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow HTTP traffic for redirection to HTTPS"
   }
 
   ingress {
@@ -55,13 +56,15 @@ resource "aws_security_group" "jenkins_sg" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow HTTPS traffic"
   }
 
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["127.0.0.1/32"]
+    description = "Allow Jenkins traffic only from localhost"
   }
 
   ingress {
@@ -69,6 +72,7 @@ resource "aws_security_group" "jenkins_sg" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow SSH access from specific IP"
   }
 
   egress {
@@ -76,7 +80,9 @@ resource "aws_security_group" "jenkins_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
+
   tags = {
     Name = "jenkins-sg"
   }
