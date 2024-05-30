@@ -59,13 +59,13 @@ resource "aws_security_group" "jenkins_sg" {
     description = "Allow HTTPS traffic"
   }
 
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["127.0.0.1/32"]
-    description = "Allow Jenkins traffic only from localhost"
-  }
+  #ingress {
+  #  from_port   = 8080
+  #  to_port     = 8080
+  #  protocol    = "tcp"
+  #  cidr_blocks = ["127.0.0.1/32"]
+  #  description = "Allow Jenkins traffic only from localhost"
+  #}
 
   ingress {
     from_port   = 22
