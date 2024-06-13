@@ -7,7 +7,7 @@ variable "ami_id" {
 variable "instance_type" {
   description = "EC2 instance machine type"
   type        = string
-  default     = "t2.micro"
+  default     = "t2.medium"
 }
 
 variable "instance_name" {

@@ -19,6 +19,10 @@ resource "aws_instance" "jenkins_server" {
   subnet_id       = aws_subnet.jenkins_subnet.id
   security_groups = [aws_security_group.jenkins_sg.id]
 
+  root_block_device {
+    volume_size = 100 // specify the size here in GB
+  }
+
   tags = {
     Name = var.instance_name
   }
