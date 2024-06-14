@@ -11,9 +11,13 @@ pipeline {
         }
         stage('Setup Terraform') {
             steps {
-                sh 'curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -'
-                sh 'sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"'
-                sh 'sudo apt-get update && sudo apt-get install terraform=1.7.3'
+                sh '''
+                if ! command -v terraform &> /dev/null; then
+                    curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+                    apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+                    apt-get update && apt-get install -y terraform=1.7.3
+                fi
+                '''
             }
         }
         stage('Initialize Terraform') {
@@ -23,12 +27,12 @@ pipeline {
         }
         stage('Terraform Format') {
             steps {
-                sh 'terraform fmt -check .'
+                sh 'terraform fmt -check'
             }
         }
         stage('Validate Terraform') {
             steps {
-                sh 'terraform validate .'
+                sh 'terraform validate'
             }
         }
     }
