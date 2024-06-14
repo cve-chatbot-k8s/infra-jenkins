@@ -1,17 +1,14 @@
 pipeline {
-    agent {
-        docker {
-            image 'hashicorp/terraform:1.7.3' // Use a Docker image with Terraform pre-installed
-            args '--entrypoint="" -u root:root' // Override the ENTRYPOINT and run as root to avoid permission issues
-        }
-    }
+    agent any
     environment {
         GH_TOKEN = credentials('github-credentials')
+    }
+    tools {
+        terraform 'Terraform' // Referencing the tool name configured in JCasC
     }
     stages {
         stage('Checkout Repository') {
             steps {
-                cleanWs()
                 checkout scm
             }
         }
