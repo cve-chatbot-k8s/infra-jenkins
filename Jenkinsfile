@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'hashicorp/terraform:1.7.3' // Use a Docker image with Terraform pre-installed
+            args '-u root:root' // Run as root to avoid permission issues
+        }
+    }
     environment {
         GH_TOKEN = credentials('github-credentials')
     }
@@ -35,5 +40,15 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            echo 'Pipeline complete'
+        }
+        success {
+            echo 'Pipeline succeeded'
+        }
+        failure {
+            echo 'Pipeline failed'
+        }
+    }
 }
-
